@@ -1,0 +1,18 @@
+# Ignore System & Environment
+venv/
+fishbone_venv/
+__pycache__/
+.DS_Store
+node_modules/
+dist/
+
+# Ignore The Heavy Data (CRITICAL)
+data/
+*.tif
+*.tiff
+*.pth
+*.onnx
+
+# Ignore images generated during testing (optional, keep if you want proof)
+# *.png
+# *.jpg
