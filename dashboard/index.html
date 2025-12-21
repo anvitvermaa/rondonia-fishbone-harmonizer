@@ -3,96 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rondônia Fishbone Harmonizer | Deep Research</title>
+    <title>Rondônia Fishbone Harmonizer | Technical Documentation</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@200;300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #10b981; /* Emerald 500 */
-            --accent: #3b82f6;  /* Blue 500 */
-            --bg-deep: #000206; /* Darker than slate */
-            --glass-border: rgba(255, 255, 255, 0.05);
-            --glass-surface: rgba(10, 15, 30, 0.4);
+            --bg-body: #0b0f19;
+            --bg-card: #111827;
+            --border-card: #1f2937;
+            --primary: #10b981;
+            --primary-dim: rgba(16, 185, 129, 0.1);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
         }
 
         body { 
-            background-color: var(--bg-deep); 
-            color: #e2e8f0; 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            selection: background-color: rgba(16, 185, 129, 0.3);
-            color: #ecfdf5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- TYPOGRAPHY --- */
-        .font-display { font-family: 'Space Grotesk', sans-serif; }
+        /* --- CUSTOM UTILITIES --- */
         .font-mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* --- ANIMATIONS --- */
-        @keyframes resolve-image {
-            0%, 100% { filter: blur(4px) contrast(0.8); opacity: 0.8; } /* LANDSAT STATE */
-            50% { filter: blur(0px) contrast(1.1); opacity: 1; }        /* SR-GAN STATE */
-        }
         
-        @keyframes grid-move {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(60px); }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.08);
         }
 
-        @keyframes scan-vertical {
-            0% { top: -10%; opacity: 0; }
-            15% { opacity: 1; }
-            85% { opacity: 1; }
-            100% { top: 110%; opacity: 0; }
-        }
-
-        @keyframes fade-in-up {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- UTILITY CLASSES --- */
-        .animate-resolve {
-            animation: resolve-image 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-        }
-
-        .bg-circuit {
-            background-image: radial-gradient(rgba(16, 185, 129, 0.1) 1px, transparent 1px);
+        .tech-grid {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
-        .glass-panel {
-            background: var(--glass-surface);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 8px 40px rgba(0,0,0,0.4);
+        /* --- FLOWCHART ANIMATIONS --- */
+        @keyframes flow-pulse {
+            0% { stroke-dashoffset: 24; }
+            100% { stroke-dashoffset: 0; }
         }
         
-        .hero-text-gradient {
-            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .pipeline-connector {
+            stroke-dasharray: 4 4;
+            animation: flow-pulse 1s linear infinite;
         }
 
-        .code-block {
-            background: #09090b;
-            border-left: 2px solid var(--primary);
+        /* --- CODE BLOCK STYLING --- */
+        .code-window {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 6px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: #a1a1aa;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            overflow: hidden;
         }
+        .code-header {
+            background: #161b22;
+            padding: 8px 16px;
+            border-bottom: 1px solid #30363d;
+            color: #8b949e;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .code-body {
+            padding: 16px;
+            color: #e6edf3;
+            overflow-x: auto;
+        }
+        .kw { color: #ff7b72; } /* Keyword */
+        .fn { color: #d2a8ff; } /* Function */
+        .str { color: #a5d6ff; } /* String */
+        .com { color: #8b949e; } /* Comment */
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #020617; }
-        ::-webkit-scrollbar-thumb { background: #334155; }
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f19; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
     </style>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -100,92 +98,59 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <script>
-        tailwind.config = { theme: { extend: { colors: { slate: { 950: '#020617' }, emerald: { 450: '#10b981' } } } } }
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        slate: { 850: '#151e32', 900: '#0f172a', 950: '#020617' }, 
+                        emerald: { 450: '#10b981', 500: '#10b981', 900: '#064e3b' } 
+                    } 
+                } 
+            } 
+        }
     </script>
 </head>
 <body>
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect } = React;
 
-        // --- ICONS ---
-        const Icon = ({ name, size = 20, className = "" }) => {
+        // --- ICONS WRAPPER ---
+        const Icon = ({ name, size = 18, className = "" }) => {
             useEffect(() => { lucide.createIcons(); }, [name]);
             return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
         };
 
-        // --- SYSTEM BOOT SEQUENCE ---
-        const SystemBoot = ({ onComplete }) => {
-            const [logs, setLogs] = useState([]);
-            const [progress, setProgress] = useState(0);
-
-            const systemLogs = [
-                "INITIALIZING_KERNEL...",
-                "MOUNTING_DRIVE: /dev/sda1 [RONDONIA_DATA]",
-                "CHECKING_CUDA_CORES... [16384 DETECTED]",
-                "LOADING_WEIGHTS: generator_v1.pth",
-                "OPTIMIZING_TENSOR_FLOW...",
-                "VERIFYING_INTEGRITY: SHA-256 MATCH",
-                "STARTING_INTERFACE..."
-            ];
-
-            useEffect(() => {
-                let delay = 0;
-                systemLogs.forEach((log, index) => {
-                    delay += Math.random() * 300 + 100;
-                    setTimeout(() => {
-                        setLogs(prev => [...prev, log]);
-                        setProgress(((index + 1) / systemLogs.length) * 100);
-                        if (index === systemLogs.length - 1) setTimeout(onComplete, 800);
-                    }, delay);
-                });
-            }, []);
-
-            return (
-                <div className="fixed inset-0 z-50 bg-[#000206] flex flex-col justify-end p-12 font-mono text-xs">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64">
-                         <div className="flex justify-between text-emerald-500 mb-2">
-                            <span>SYSTEM_BOOT</span>
-                            <span>{Math.round(progress)}%</span>
-                        </div>
-                        <div className="h-0.5 bg-slate-800 w-full overflow-hidden">
-                            <div className="h-full bg-emerald-500 transition-all duration-300" style={{ width: `${progress}%` }}></div>
-                        </div>
-                    </div>
-                    <div className="space-y-1 text-slate-500">
-                        {logs.map((log, i) => (
-                            <div key={i} className="flex gap-4">
-                                <span className="text-slate-700">[{new Date().toISOString().split('T')[1].split('.')[0]}]</span>
-                                <span className={i === logs.length -1 ? "text-emerald-400 animate-pulse" : "text-slate-400"}>{log}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            );
-        };
-
-        // --- NAVIGATION ---
+        // --- NAVIGATION COMPONENT ---
         const Navbar = ({ page, setPage }) => (
-            <nav className="fixed top-0 w-full z-40 border-b border-white/5 bg-[#000206]/80 backdrop-blur-md">
-                <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-3 group cursor-pointer" onClick={() => setPage('home')}>
-                        <div className="w-10 h-10 border border-emerald-500/30 rounded flex items-center justify-center bg-emerald-500/5 group-hover:bg-emerald-500/10 transition-colors">
-                            <Icon name="aperture" className="text-emerald-500" size={20} />
+            <nav className="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur border-b border-white/5">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setPage('home')}>
+                        <div className="w-8 h-8 bg-emerald-500/10 rounded flex items-center justify-center border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
+                            <Icon name="aperture" className="text-emerald-500" size={16}/>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="font-display font-bold tracking-tight text-sm">FISHBONE.AI</span>
-                            <span className="text-[10px] text-slate-500 font-mono tracking-widest">OPEN SOURCE RESEARCH</span>
+                        <div className="leading-tight">
+                            <div className="text-sm font-bold tracking-tight text-white">FISHBONE HARMONIZER</div>
+                            <div className="text-[10px] text-slate-400 font-mono">CAPSTONE 2025</div>
                         </div>
                     </div>
-                    <div className="flex gap-8">
-                        {['home', 'mission', 'dashboard'].map((item) => (
+                    <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
+                        {[
+                            { id: 'home', label: 'Overview' },
+                            { id: 'mission', label: 'Methodology' },
+                            { id: 'tech', label: 'System Architecture' }
+                        ].map((item) => (
                             <button 
-                                key={item}
-                                onClick={() => setPage(item)}
-                                className={`text-sm font-mono uppercase tracking-widest transition-all ${page === item ? 'text-emerald-400' : 'text-slate-500 hover:text-white'}`}
+                                key={item.id}
+                                onClick={() => setPage(item.id)}
+                                className={`px-4 py-1.5 rounded text-xs font-medium transition-all ${
+                                    page === item.id 
+                                    ? 'bg-emerald-600 text-white shadow-lg' 
+                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                }`}
                             >
-                                <span className="mr-1 opacity-50">/</span>{item}
+                                {item.label}
                             </button>
                         ))}
                     </div>
@@ -193,162 +158,127 @@
             </nav>
         );
 
-        // --- HOME PAGE ---
+        // --- HOME PAGE (OVERVIEW) ---
         const HomePage = ({ setPage }) => (
-            <div className="min-h-screen pt-32 pb-20 relative overflow-hidden">
-                {/* BACKGROUND FX */}
-                <div className="fixed inset-0 bg-circuit opacity-20 pointer-events-none"></div>
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none"></div>
-                
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
-                    
-                    {/* HERO SECTION */}
-                    <div className="max-w-4xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-xs font-mono mb-8">
-                            <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                            CAPSTONE PROJECT 2025
-                        </div>
-                        
-                        <h1 className="text-6xl md:text-8xl font-display font-bold leading-tight mb-8 hero-text-gradient">
-                            Restoring History<br/>Pixel by Pixel.
-                        </h1>
-                        
-                        <p className="text-xl text-slate-400 leading-relaxed max-w-2xl mb-12">
-                            The <strong>Rondônia Fishbone Harmonizer</strong> is an open-source initiative leveraging Generative Adversarial Networks (SR-GAN) to harmonize 30 years of inconsistent satellite imagery into a unified, 10m-resolution Analysis Ready Data (ARD) archive.
-                        </p>
+            <div className="min-h-screen pt-20 relative bg-tech-grid">
+                {/* Hero Background Image */}
+                <div className="absolute inset-0 z-0">
+                    <img 
+                        src="rondonia_result_preview.png" 
+                        className="w-full h-full object-cover opacity-10 blur-sm" 
+                        alt="Satellite Background"
+                        onError={(e) => e.target.style.display = 'none'}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/90 to-transparent"></div>
+                </div>
 
-                        <div className="flex flex-wrap gap-4 mb-24">
-                            <button onClick={() => setPage('dashboard')} className="px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold font-mono text-sm rounded transition-all flex items-center gap-2">
-                                <Icon name="flask-conical" size={16}/> ENTER LAB
-                            </button>
-                            <button onClick={() => setPage('mission')} className="px-8 py-4 border border-slate-700 hover:border-slate-500 text-white font-mono text-sm rounded transition-all flex items-center gap-2 bg-slate-900/50">
-                                <Icon name="git-branch" size={16}/> VIEW METHODOLOGY
-                            </button>
-                        </div>
+                <div className="relative z-10 max-w-5xl mx-auto px-6 pt-16 pb-32">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono mb-8">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        Project Status: Production Ready
                     </div>
 
-                    {/* TECHNICAL DEEP DIVE SECTION */}
-                    <div className="grid md:grid-cols-3 gap-8 border-t border-slate-800 pt-16">
-                        <div className="glass-panel p-8 rounded-xl">
-                            <Icon name="layers" className="text-blue-400 mb-4" />
-                            <h3 className="font-display font-bold text-lg mb-2">The Architecture</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                                We utilize a modified SR-ResNet generator with 16 residual blocks, coupled with a VGG-19 discriminator for perceptual loss optimization.
-                            </p>
-                            <div className="code-block p-3 rounded">
-                                class Generator(nn.Module):<br/>
-                                &nbsp;&nbsp;def __init__(self):<br/>
-                                &nbsp;&nbsp;&nbsp;&nbsp;self.net = RRDBNet(...)
+                    <h1 className="text-6xl font-bold text-white mb-6 tracking-tight">
+                        Democratizing High-Resolution<br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Historical Geography</span>
+                    </h1>
+
+                    <p className="text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
+                        The <strong>Rondônia Fishbone Harmonizer</strong> is an open-source machine learning pipeline designed to upscale 30-year archival Landsat imagery (30m) to Sentinel-2 quality (10m). By recovering high-frequency texture details, we enable precise deforestation analysis across decades of historical data.
+                    </p>
+
+                    <div className="flex gap-4">
+                        <button onClick={() => setPage('tech')} className="px-6 py-3 bg-white text-slate-900 font-bold text-sm rounded hover:bg-slate-200 transition-colors flex items-center gap-2">
+                            <Icon name="cpu" size={18}/> View Architecture
+                        </button>
+                        <button onClick={() => setPage('mission')} className="px-6 py-3 bg-slate-800 border border-slate-700 text-white font-medium text-sm rounded hover:bg-slate-700 transition-colors flex items-center gap-2">
+                            <Icon name="file-text" size={18}/> Read Methodology
+                        </button>
+                    </div>
+
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-4 gap-8 mt-24 border-t border-slate-800 pt-10">
+                        {[
+                            { label: "Temporal Depth", val: "30 Years" },
+                            { label: "Training Pairs", val: "1,336" },
+                            { label: "Target GSD", val: "10m" },
+                            { label: "SSIM Score", val: "0.892" }
+                        ].map((s, i) => (
+                            <div key={i}>
+                                <div className="text-3xl font-bold text-white font-mono">{s.val}</div>
+                                <div className="text-xs text-slate-500 uppercase tracking-wider mt-1">{s.label}</div>
                             </div>
-                        </div>
-
-                        <div className="glass-panel p-8 rounded-xl">
-                            <Icon name="database" className="text-purple-400 mb-4" />
-                            <h3 className="font-display font-bold text-lg mb-2">Data Pipeline</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed mb-4">
-                                A distributed harvesting system scrapes the Planetary Computer STAC API, aligning Landsat-5/7/8 (30m) with Sentinel-2 (10m) ground truths.
-                            </p>
-                            <ul className="text-xs font-mono text-slate-500 space-y-2">
-                                <li className="flex justify-between"><span>RAW_INPUT:</span> <span>30m GSD</span></li>
-                                <li className="flex justify-between"><span>TARGET:</span> <span>10m GSD</span></li>
-                                <li className="flex justify-between"><span>LATENCY:</span> <span>22ms/tile</span></li>
-                            </ul>
-                        </div>
-
-                        <div className="glass-panel p-8 rounded-xl">
-                            <Icon name="globe" className="text-emerald-400 mb-4" />
-                            <h3 className="font-display font-bold text-lg mb-2">Impact</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">
-                                By recovering lost texture in historical data (1995-2015), we allow modern deforestation algorithms to accurately classify previously "blurry" forest loss events.
-                            </p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </div>
         );
 
-        // --- MISSION PAGE ---
+        // --- METHODOLOGY PAGE ---
         const MissionPage = () => (
-            <div className="min-h-screen pt-32 pb-20 px-6 max-w-7xl mx-auto">
-                <div className="grid lg:grid-cols-2 gap-16">
-                    
-                    {/* LEFT: TEXT CONTENT */}
-                    <div className="space-y-12">
-                        <div>
-                            <h2 className="text-5xl font-display font-bold mb-6">The Resolution Gap</h2>
-                            <p className="text-slate-400 text-lg leading-relaxed">
-                                Climate science has a data problem. Modern satellites (Sentinel-2) provide crisp 10m imagery, but they only launched in 2015. To understand the <strong>full history of the Amazon</strong>, we must rely on Landsat (1984-Present), which is limited to 30m resolution.
+            <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
+                <div className="grid lg:grid-cols-12 gap-16">
+                    {/* Left Content */}
+                    <div className="lg:col-span-7 space-y-12">
+                        <section>
+                            <h2 className="text-3xl font-bold text-white mb-6">1. The Research Gap</h2>
+                            <p className="text-slate-400 leading-relaxed mb-4">
+                                Accurate longitudinal studies of Amazonian deforestation are hindered by sensor inconsistency. Modern Sentinel-2 satellites (2015-Present) offer crisp 10m imagery, ideal for detecting small-scale illegal logging roads. However, the historical record (1984-2015) relies on Landsat's 30m sensors.
                             </p>
-                        </div>
-
-                        <div className="border-l-2 border-emerald-500 pl-6 space-y-4">
-                            <h3 className="text-white font-bold font-mono">THE PROBLEM</h3>
-                            <p className="text-slate-500 text-sm">
-                                Standard bicubic upscaling creates "muddy" edges. Deforestation roads—often only 10-15m wide—disappear in 30m pixels, causing models to underestimate early illegal logging.
-                            </p>
-                        </div>
-
-                        <div className="border-l-2 border-blue-500 pl-6 space-y-4">
-                            <h3 className="text-white font-bold font-mono">THE SOLUTION</h3>
-                            <p className="text-slate-500 text-sm">
-                                Our SR-GAN hallucinates plausible high-frequency details based on learned geographic features, effectively "reconstructing" the roads that were lost to low resolution sensors.
-                            </p>
-                        </div>
-
-                        <div className="pt-8 flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center">
-                                <Icon name="user" className="text-slate-400"/>
+                            <div className="bg-slate-800/50 p-4 rounded border border-slate-700 text-sm text-slate-300 italic">
+                                "This resolution mismatch creates a 'blind spot' in the historical data, causing models to underestimate early fragmentation events."
                             </div>
-                            <div>
-                                <div className="text-white font-bold">Anvit Verma</div>
-                                <div className="text-xs font-mono text-emerald-500">LEAD RESEARCHER / DEVELOPER</div>
+                        </section>
+
+                        <section>
+                            <h2 className="text-3xl font-bold text-white mb-6">2. Our Approach: SR-GAN</h2>
+                            <p className="text-slate-400 leading-relaxed mb-6">
+                                We propose a <strong>Super-Resolution Generative Adversarial Network (SR-GAN)</strong> adapted for multispectral remote sensing data. Unlike standard bicubic interpolation, which blurs edges, our model "hallucinates" plausible high-frequency details based on learned geographic features.
+                            </p>
+                            
+                            <div className="grid sm:grid-cols-2 gap-4">
+                                <div className="p-4 rounded bg-slate-900 border border-slate-800">
+                                    <h4 className="font-bold text-emerald-400 text-sm mb-2">Generator (G)</h4>
+                                    <p className="text-xs text-slate-500">
+                                        Deep Residual Network (ResNet) with 16 residual blocks using PReLU activation. Upsamples 30m input to 10m output.
+                                    </p>
+                                </div>
+                                <div className="p-4 rounded bg-slate-900 border border-slate-800">
+                                    <h4 className="font-bold text-blue-400 text-sm mb-2">Discriminator (D)</h4>
+                                    <p className="text-xs text-slate-500">
+                                        VGG-style classifier that learns to distinguish between "Real" Sentinel data and "Fake" Upscaled Landsat data.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
 
-                    {/* RIGHT: ANIMATED VISUALIZER (NO SLIDER) */}
-                    <div className="relative">
-                        <div className="sticky top-32">
-                            {/* The Visualizer Card */}
-                            <div className="glass-panel p-2 rounded-2xl relative overflow-hidden aspect-square group">
-                                <div className="absolute inset-0 bg-slate-900 z-0"></div>
-                                
-                                {/* Image Container with Animation */}
-                                <div className="relative w-full h-full rounded-xl overflow-hidden">
-                                    <img 
-                                        src="rondonia_fishbone_cropped.png" 
-                                        className="w-full h-full object-cover scale-110 animate-resolve"
-                                        alt="AI Restoration Visualization"
-                                        onError={(e) => {
-                                            e.target.style.display = 'none'; 
-                                            // Fallback UI
-                                            e.target.parentNode.innerHTML = '<div class="flex items-center justify-center h-full text-xs font-mono text-slate-600">IMAGE_LOAD_FAIL: check dashboard folder</div>'
-                                        }}
-                                    />
-                                    
-                                    {/* Overlay UI */}
-                                    <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-                                        <div className="px-3 py-1 bg-black/60 backdrop-blur rounded text-[10px] font-mono border border-white/10 text-emerald-400">
-                                            LIVE INFERENCE PREVIEW
-                                        </div>
-                                        <Icon name="cpu" className="text-emerald-500 animate-pulse" size={16} />
-                                    </div>
-
-                                    {/* Animated Labels */}
-                                    <div className="absolute bottom-6 left-6 space-y-1 z-10">
-                                        <div className="text-[10px] font-mono text-slate-400">MODEL STATE</div>
-                                        <div className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                                            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                            SUPER_RESOLUTION
-                                        </div>
-                                    </div>
+                    {/* Right Visualizer */}
+                    <div className="lg:col-span-5">
+                        <div className="sticky top-24 space-y-6">
+                            <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-black shadow-2xl aspect-square">
+                                <img 
+                                    src="rondonia_fishbone_cropped.png" 
+                                    className="w-full h-full object-cover"
+                                    alt="Fishbone Pattern"
+                                    onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.parentNode.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-slate-500 font-mono text-center p-8">IMAGE LOAD ERROR<br/>Please ensure rondonia_fishbone_cropped.png is in dashboard folder</div>';
+                                    }}
+                                />
+                                <div className="absolute top-4 left-4 bg-black/80 backdrop-blur px-3 py-1 rounded border border-white/10">
+                                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Target: Fishbone Pattern</span>
                                 </div>
                             </div>
                             
-                            {/* Caption */}
-                            <div className="mt-6 flex justify-between text-xs font-mono text-slate-500">
-                                <span>INPUT: LANDSAT-5 (1998)</span>
-                                <span>OUTPUT: SYNTHETIC 10M</span>
+                            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800">
+                                <h3 className="text-sm font-bold text-white mb-4">Why "Fishbone"?</h3>
+                                <p className="text-xs text-slate-400 leading-relaxed">
+                                    The "Fishbone" pattern is the result of systematic deforestation radiating perpendicularly from the main BR-364 highway. These secondary roads are often 10-20m wide—visible in Sentinel (10m) but blurred in Landsat (30m). Restoring these lines is the primary benchmark of our model's success.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -356,131 +286,213 @@
             </div>
         );
 
-        // --- DASHBOARD (LAB) PAGE ---
-        const DashboardPage = () => {
-            // Re-using the simpler slider logic for the lab, but purely static for stability
-            const [sliderPos, setSliderPos] = useState(50);
-            const containerRef = useRef(null);
+        // --- ARCHITECTURE PAGE (THE REPLACEMENT FOR DASHBOARD) ---
+        const TechPage = () => (
+            <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
+                <div className="mb-12 border-b border-white/10 pb-8">
+                    <h1 className="text-4xl font-bold text-white mb-2">System Architecture</h1>
+                    <p className="text-slate-400">
+                        Overview of the distributed data pipeline, training infrastructure, and inference engine.
+                    </p>
+                </div>
 
-            const handleMove = (e) => {
-                if(!containerRef.current) return;
-                const rect = containerRef.current.getBoundingClientRect();
-                const x = e.touches ? e.touches[0].clientX : e.clientX;
-                const p = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
-                setSliderPos(p);
-            };
-
-            return (
-                <div className="pt-32 pb-20 px-6 max-w-[1600px] mx-auto">
-                    <div className="flex justify-between items-end mb-8 border-b border-slate-800 pb-6">
-                        <div>
-                            <div className="text-emerald-500 font-mono text-xs mb-2">SESSION ID: #RFH-2025-ALPHA</div>
-                            <h2 className="text-3xl font-display font-bold">Inference Laboratory</h2>
-                        </div>
-                        <div className="flex gap-4 text-xs font-mono text-slate-500">
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
-                                GPU: ONLINE
+                {/* 1. THE PIPELINE FLOWCHART */}
+                <div className="mb-16">
+                    <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-6">End-to-End Data Pipeline</h3>
+                    <div className="w-full bg-[#0d1117] border border-slate-800 rounded-xl p-8 overflow-x-auto">
+                        <div className="flex items-center justify-between min-w-[800px] gap-8">
+                            
+                            {/* Node 1 */}
+                            <div className="flex flex-col items-center gap-4 text-center">
+                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
+                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-blue-400 font-mono">SOURCE</div>
+                                    <div className="text-xs font-bold text-white">Planetary<br/>Computer API</div>
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono">STAC CATALOG</div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                                API: CONNECTED
+
+                            {/* Arrow */}
+                            <div className="flex-1 h-px bg-slate-700 relative">
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">HARVEST</div>
+                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
+                            </div>
+
+                            {/* Node 2 */}
+                            <div className="flex flex-col items-center gap-4 text-center">
+                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
+                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-emerald-400 font-mono">PRE-PROC</div>
+                                    <div className="text-xs font-bold text-white">Distributed<br/>Nodes (x3)</div>
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono">CO-REGISTRATION</div>
+                            </div>
+
+                            {/* Arrow */}
+                            <div className="flex-1 h-px bg-slate-700 relative">
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">BATCH</div>
+                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
+                            </div>
+
+                            {/* Node 3 */}
+                            <div className="flex flex-col items-center gap-4 text-center">
+                                <div className="w-32 h-20 rounded bg-slate-800 border border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.1)] flex items-center justify-center relative">
+                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-emerald-500 font-mono font-bold">TRAINING</div>
+                                    <div className="text-xs font-bold text-white">NVIDIA<br/>RTX 4090</div>
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono">SR-GAN MODEL</div>
+                            </div>
+
+                            {/* Arrow */}
+                            <div className="flex-1 h-px bg-slate-700 relative">
+                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">INFERENCE</div>
+                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
+                            </div>
+
+                            {/* Node 4 */}
+                            <div className="flex flex-col items-center gap-4 text-center">
+                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
+                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-purple-400 font-mono">OUTPUT</div>
+                                    <div className="text-xs font-bold text-white">ARD<br/>GeoTIFFs</div>
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono">10M ANALYSIS READY</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid lg:grid-cols-2 gap-12">
+                    {/* 2. CORE CODE SNIPPETS */}
+                    <div className="space-y-8">
+                        <div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-white">Model Definition (PyTorch)</h3>
+                                <span className="text-[10px] font-mono text-slate-500">rondonia_trainer.py</span>
+                            </div>
+                            <div className="code-window">
+                                <div className="code-header">
+                                    <div className="flex gap-1.5">
+                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50"></div>
+                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50"></div>
+                                    </div>
+                                    <span>Python 3.9</span>
+                                </div>
+                                <pre className="code-body">
+<span className="kw">class</span> <span className="fn">Generator</span>(nn.Module):
+    <span className="kw">def</span> <span className="fn">__init__</span>(self):
+        <span className="kw">super</span>().__init__()
+        <span className="com"># Initial Convolution</span>
+        self.head = nn.Sequential(
+            nn.Conv2d(3, 64, 9, 1, 4),
+            nn.PReLU()
+        )
+        <span className="com"># 16 Residual Blocks for deep feature extraction</span>
+        self.body = nn.Sequential(*[
+            ResidualBlock(64) <span className="kw">for</span> _ <span className="kw">in</span> <span className="fn">range</span>(16)
+        ])
+        <span className="com"># PixelShuffle for Upscaling (x3)</span>
+        self.tail = nn.Sequential(
+            nn.Conv2d(64, 256, 3, 1, 1),
+            nn.PixelShuffle(3), <span className="com"># Upscale 30m -> 10m</span>
+            nn.PReLU(),
+            nn.Conv2d(64, 3, 9, 1, 4),
+            nn.Sigmoid() <span className="com"># Normalize 0-1</span>
+        )</pre>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-sm font-bold text-white">Distributed Harvesting Logic</h3>
+                                <span className="text-[10px] font-mono text-slate-500">rondonia_harvester.py</span>
+                            </div>
+                            <div className="code-window">
+                                <div className="code-header">
+                                    <span>Python 3.9</span>
+                                </div>
+                                <pre className="code-body">
+<span className="kw">def</span> <span className="fn">process_item</span>(item, platform):
+    <span className="com"># Dynamic asset resolution based on platform</span>
+    assets = BAND_MAPPING[platform][<span className="str">"assets"</span>]
+    
+    <span className="kw">for</span> band <span className="kw">in</span> assets:
+        <span className="kw">if</span> band <span className="kw">in</span> item.assets:
+            url = item.assets[band].href
+            <span className="com"># Stream download to avoid memory overflow</span>
+            <span className="fn">download_stream</span>(url, target_path)
+            
+            <span className="com"># Log metrics to dashboard</span>
+            <span className="fn">log_metric</span>(<span className="str">"HARVEST_RATE"</span>, 1)
+</pre>
                             </div>
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-12 gap-8">
-                        {/* LEFT: CONTROLS */}
-                        <div className="lg:col-span-3 space-y-6">
-                            <div className="glass-panel p-6 rounded-xl">
-                                <div className="text-xs font-mono text-slate-500 mb-4">MODEL METRICS</div>
-                                <div className="space-y-6">
-                                    <div>
-                                        <div className="flex justify-between text-sm mb-1"><span>PSNR</span> <span className="text-white">32.45 dB</span></div>
-                                        <div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-emerald-500 w-[85%]"></div></div>
-                                    </div>
-                                    <div>
-                                        <div className="flex justify-between text-sm mb-1"><span>SSIM</span> <span className="text-white">0.892</span></div>
-                                        <div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-blue-500 w-[70%]"></div></div>
-                                    </div>
-                                    <div>
-                                        <div className="flex justify-between text-sm mb-1"><span>LPIPS</span> <span className="text-white">0.104</span></div>
-                                        <div className="h-1 bg-slate-800 rounded-full overflow-hidden"><div className="h-full bg-purple-500 w-[20%]"></div></div>
+                    {/* 3. HARDWARE SPECS & DEPENDENCIES */}
+                    <div className="space-y-8">
+                        <div>
+                            <h3 className="text-sm font-bold text-white mb-4">Production Environment</h3>
+                            <div className="glass-panel rounded-lg p-6 space-y-6">
+                                <div>
+                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Compute Node</div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-slate-800 rounded border border-slate-700">
+                                            <Icon name="cpu" className="text-emerald-400" size={24}/>
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-white">NVIDIA GeForce RTX 4090</div>
+                                            <div className="text-xs text-slate-400">24GB GDDR6X VRAM</div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div className="glass-panel p-6 rounded-xl border-t-4 border-emerald-500">
-                                <div className="text-xs font-mono text-emerald-500 mb-2">STATUS</div>
-                                <div className="text-2xl font-bold text-white mb-1">Training Complete</div>
-                                <div className="text-sm text-slate-400 mb-6">Model v1.0 saved to disk.</div>
-                                <button className="w-full py-3 bg-emerald-500/10 border border-emerald-500/50 text-emerald-400 font-mono text-xs rounded hover:bg-emerald-500 hover:text-black transition-all">
-                                    DOWNLOAD_WEIGHTS (.PTH)
-                                </button>
+                                <div className="h-px bg-slate-800"></div>
+                                <div>
+                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Storage Array</div>
+                                    <div className="flex items-center gap-4">
+                                        <div className="p-3 bg-slate-800 rounded border border-slate-700">
+                                            <Icon name="hard-drive" className="text-blue-400" size={24}/>
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-white">2TB NVMe SSD (Gen 4)</div>
+                                            <div className="text-xs text-slate-400">Read/Write: 7000 MB/s</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="h-px bg-slate-800"></div>
+                                <div>
+                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Software Stack</div>
+                                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-mono">
+                                        <div className="bg-slate-900 px-2 py-1 rounded">Ubuntu 22.04 LTS</div>
+                                        <div className="bg-slate-900 px-2 py-1 rounded">Python 3.10</div>
+                                        <div className="bg-slate-900 px-2 py-1 rounded">PyTorch 2.0 (CUDA 11.8)</div>
+                                        <div className="bg-slate-900 px-2 py-1 rounded">Rasterio / GDAL</div>
+                                        <div className="bg-slate-900 px-2 py-1 rounded">React 18 / Tailwind</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* RIGHT: COMPARISON TOOL */}
-                        <div className="lg:col-span-9">
-                            <div 
-                                ref={containerRef}
-                                className="relative h-[600px] rounded-xl overflow-hidden border border-slate-700 bg-black group cursor-col-resize select-none"
-                                onMouseMove={handleMove}
-                                onTouchMove={handleMove}
-                            >
-                                {/* BACKGROUND (SR-GAN) */}
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    {/* Labels */}
-                                    <div className="absolute top-6 right-6 text-right pointer-events-none z-10">
-                                        <div className="text-4xl font-black text-white/90 tracking-tighter">SR-GAN</div>
-                                        <div className="text-emerald-500 font-mono text-xs">10M PREDICTION</div>
-                                    </div>
-                                    {/* Grid Overlay */}
-                                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                        <div>
+                            <h3 className="text-sm font-bold text-white mb-4">Contributor</h3>
+                            <div className="bg-slate-800/50 border border-slate-700 p-4 rounded-lg flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-slate-400 font-bold">
+                                    AV
                                 </div>
-
-                                {/* FOREGROUND (LANDSAT) */}
-                                <div 
-                                    className="absolute inset-y-0 left-0 overflow-hidden border-r border-white/50 bg-[#050505]"
-                                    style={{ width: `${sliderPos}%` }}
-                                >
-                                    <div className="absolute inset-0 w-screen max-w-[1600px]">
-                                        <div className="absolute top-6 left-6 pointer-events-none z-10">
-                                            <div className="text-4xl font-black text-slate-600 tracking-tighter">LANDSAT</div>
-                                            <div className="text-slate-500 font-mono text-xs">30M RAW INPUT</div>
-                                        </div>
-                                        {/* Pixelation effect */}
-                                        <div className="absolute inset-0 backdrop-blur-[2px]"></div>
-                                    </div>
+                                <div>
+                                    <div className="text-white font-bold text-sm">Anvit Verma</div>
+                                    <div className="text-xs text-emerald-400 font-mono">LEAD RESEARCHER / DEVELOPER</div>
+                                    <p className="text-xs text-slate-500 mt-1">Computer Science Undergrad (3rd Year)</p>
                                 </div>
-
-                                {/* SLIDER HANDLE */}
-                                <div 
-                                    className="absolute inset-y-0 w-0.5 bg-white shadow-[0_0_20px_white] z-20"
-                                    style={{ left: `${sliderPos}%` }}
-                                >
-                                    <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 bg-black border-2 border-white rounded-full flex items-center justify-center">
-                                        <Icon name="move-horizontal" size={14} className="text-white" />
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="mt-4 flex justify-between text-xs font-mono text-slate-500">
-                                <div>Interactive Comparison Tool v2.1</div>
-                                <div>Drag to compare resolutions</div>
                             </div>
                         </div>
                     </div>
                 </div>
-            );
-        };
+            </div>
+        );
 
         // --- APP ROOT ---
         const App = () => {
             const [page, setPage] = useState('home');
-            const [booted, setBooted] = useState(false);
-
-            if (!booted) return <SystemBoot onComplete={() => setBooted(true)} />;
 
             return (
                 <div className="min-h-screen flex flex-col">
@@ -488,12 +500,11 @@
                     <main className="flex-grow">
                         {page === 'home' && <HomePage setPage={setPage} />}
                         {page === 'mission' && <MissionPage />}
-                        {page === 'dashboard' && <DashboardPage />}
+                        {page === 'tech' && <TechPage />}
                     </main>
-                    <footer className="border-t border-slate-900 bg-[#000206] py-12 text-center">
-                        <div className="text-slate-600 text-xs font-mono">
-                            &copy; 2025 RONDÔNIA FISHBONE HARMONIZER. OPEN SOURCE LICENSE (MIT).
-                        </div>
+                    <footer className="border-t border-slate-800 bg-slate-900 py-12 text-center text-slate-500 text-xs font-mono">
+                        <p className="mb-2">RONDÔNIA FISHBONE HARMONIZER | OPEN SOURCE RESEARCH</p>
+                        <p>&copy; 2025 Anvit Verma. MIT License.</p>
                     </footer>
                 </div>
             );
