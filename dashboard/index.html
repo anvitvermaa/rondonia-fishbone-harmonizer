@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rondônia Fishbone Harmonizer | Technical Documentation</title>
+    <title>Restoring History | Rondônia Fishbone Harmonizer</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -11,17 +11,16 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-body: #0b0f19;
-            --bg-card: #111827;
-            --border-card: #1f2937;
+            --bg-body: #050505;
+            --bg-card: #0a0a0a;
+            --border-card: #262626;
             --primary: #10b981;
-            --primary-dim: rgba(16, 185, 129, 0.1);
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+            --text-main: #e5e5e5;
+            --text-muted: #a3a3a3;
         }
 
         body { 
@@ -31,66 +30,76 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- CUSTOM UTILITIES --- */
+        /* --- UTILITIES --- */
         .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-display { font-family: 'Space Grotesk', sans-serif; }
         
         .glass-panel {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(12px);
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255,255,255,0.08);
         }
 
         .tech-grid {
             background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
-
-        /* --- FLOWCHART ANIMATIONS --- */
-        @keyframes flow-pulse {
-            0% { stroke-dashoffset: 24; }
-            100% { stroke-dashoffset: 0; }
-        }
-        
-        .pipeline-connector {
-            stroke-dasharray: 4 4;
-            animation: flow-pulse 1s linear infinite;
+            background-size: 50px 50px;
         }
 
         /* --- CODE BLOCK STYLING --- */
         .code-window {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            line-height: 1.5;
+            font-size: 0.8rem;
+            line-height: 1.6;
             overflow: hidden;
         }
         .code-header {
-            background: #161b22;
+            background: #111;
             padding: 8px 16px;
-            border-bottom: 1px solid #30363d;
-            color: #8b949e;
-            font-size: 0.75rem;
+            border-bottom: 1px solid #333;
+            color: #666;
+            font-size: 0.7rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .code-body {
             padding: 16px;
-            color: #e6edf3;
+            color: #ccc;
             overflow-x: auto;
         }
-        .kw { color: #ff7b72; } /* Keyword */
-        .fn { color: #d2a8ff; } /* Function */
-        .str { color: #a5d6ff; } /* String */
-        .com { color: #8b949e; } /* Comment */
+        /* Syntax Colors */
+        .kw { color: #f472b6; } /* Pink - Keyword */
+        .fn { color: #60a5fa; } /* Blue - Function */
+        .str { color: #34d399; } /* Emerald - String */
+        .com { color: #525252; } /* Grey - Comment */
+
+        /* --- ANIMATIONS --- */
+        @keyframes resolve {
+            0% { filter: blur(4px) contrast(0.8); }
+            50% { filter: blur(0px) contrast(1.1); }
+            100% { filter: blur(4px) contrast(0.8); }
+        }
+        .animate-resolve { animation: resolve 6s infinite ease-in-out; }
 
         /* --- SCROLLBAR --- */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0b0f19; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+        
+        /* --- MATH FORMULA STYLE --- */
+        .math-block {
+            background: #0f172a;
+            border-left: 2px solid #10b981;
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: #e2e8f0;
+            font-size: 0.85rem;
+        }
     </style>
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -116,38 +125,42 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- ICONS WRAPPER ---
+        // --- SAFE ICON COMPONENT ---
         const Icon = ({ name, size = 18, className = "" }) => {
-            useEffect(() => { lucide.createIcons(); }, [name]);
-            return <i data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
+            useEffect(() => {
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            });
+            return <i data-lucide={name} className={className} style={{ width: size, height: size, display: 'inline-block' }}></i>;
         };
 
-        // --- NAVIGATION COMPONENT ---
+        // --- NAVIGATION ---
         const Navbar = ({ page, setPage }) => (
-            <nav className="fixed top-0 w-full z-50 bg-slate-900/90 backdrop-blur border-b border-white/5">
+            <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setPage('home')}>
                         <div className="w-8 h-8 bg-emerald-500/10 rounded flex items-center justify-center border border-emerald-500/20 group-hover:border-emerald-500/50 transition-colors">
-                            <Icon name="aperture" className="text-emerald-500" size={16}/>
+                            <Icon name="cpu" className="text-emerald-500" size={16}/>
                         </div>
                         <div className="leading-tight">
-                            <div className="text-sm font-bold tracking-tight text-white">FISHBONE HARMONIZER</div>
-                            <div className="text-[10px] text-slate-400 font-mono">CAPSTONE 2025</div>
+                            <div className="text-sm font-bold tracking-tight text-white font-display">FISHBONE.AI</div>
+                            <div className="text-[10px] text-slate-500 font-mono">CAPSTONE 2025</div>
                         </div>
                     </div>
-                    <div className="flex gap-1 bg-white/5 p-1 rounded-lg">
+                    <div className="flex gap-2">
                         {[
                             { id: 'home', label: 'Overview' },
-                            { id: 'mission', label: 'Methodology' },
-                            { id: 'tech', label: 'System Architecture' }
+                            { id: 'mission', label: 'Mission' },
+                            { id: 'tech', label: 'Architecture' }
                         ].map((item) => (
                             <button 
                                 key={item.id}
                                 onClick={() => setPage(item.id)}
-                                className={`px-4 py-1.5 rounded text-xs font-medium transition-all ${
+                                className={`px-4 py-1.5 rounded text-xs font-mono transition-all ${
                                     page === item.id 
-                                    ? 'bg-emerald-600 text-white shadow-lg' 
-                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                                    ? 'bg-white/10 text-white border border-white/20' 
+                                    : 'text-slate-500 hover:text-white hover:bg-white/5'
                                 }`}
                             >
                                 {item.label}
@@ -158,56 +171,49 @@
             </nav>
         );
 
-        // --- HOME PAGE (OVERVIEW) ---
+        // --- HOME PAGE ---
         const HomePage = ({ setPage }) => (
-            <div className="min-h-screen pt-20 relative bg-tech-grid">
-                {/* Hero Background Image */}
+            <div className="min-h-screen pt-20 relative bg-tech-grid flex flex-col justify-center">
                 <div className="absolute inset-0 z-0">
                     <img 
                         src="rondonia_result_preview.png" 
-                        className="w-full h-full object-cover opacity-10 blur-sm" 
+                        className="w-full h-full object-cover opacity-20 blur-sm mix-blend-screen" 
                         alt="Satellite Background"
                         onError={(e) => e.target.style.display = 'none'}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/90 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/90 to-transparent"></div>
                 </div>
 
-                <div className="relative z-10 max-w-5xl mx-auto px-6 pt-16 pb-32">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/10 text-emerald-400 text-xs font-mono mb-8">
-                        <span className="relative flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        Project Status: Production Ready
-                    </div>
+                <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+                    
+                    {/* BADGE REMOVED HERE AS REQUESTED */}
 
-                    <h1 className="text-6xl font-bold text-white mb-6 tracking-tight">
-                        Democratizing High-Resolution<br/>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">Historical Geography</span>
+                    <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 tracking-tighter leading-tight font-display">
+                        Restoring History,<br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Pixel by Pixel.</span>
                     </h1>
 
-                    <p className="text-lg text-slate-400 max-w-2xl leading-relaxed mb-10">
-                        The <strong>Rondônia Fishbone Harmonizer</strong> is an open-source machine learning pipeline designed to upscale 30-year archival Landsat imagery (30m) to Sentinel-2 quality (10m). By recovering high-frequency texture details, we enable precise deforestation analysis across decades of historical data.
+                    <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10">
+                        An open-source initiative leveraging <strong>Super-Resolution GANs</strong> to reconstruct lost deforestation patterns in 30-year archival Landsat imagery. We bridge the resolution gap between the past (30m) and the present (10m).
                     </p>
 
-                    <div className="flex gap-4">
-                        <button onClick={() => setPage('tech')} className="px-6 py-3 bg-white text-slate-900 font-bold text-sm rounded hover:bg-slate-200 transition-colors flex items-center gap-2">
-                            <Icon name="cpu" size={18}/> View Architecture
-                        </button>
-                        <button onClick={() => setPage('mission')} className="px-6 py-3 bg-slate-800 border border-slate-700 text-white font-medium text-sm rounded hover:bg-slate-700 transition-colors flex items-center gap-2">
-                            <Icon name="file-text" size={18}/> Read Methodology
+                    <div className="flex justify-center gap-4">
+                        <a href="https://github.com/anvitvermaa/rondonia-fishbone-harmonizer" target="_blank" className="px-8 py-3 bg-white text-black font-bold text-sm rounded hover:bg-slate-200 transition-colors flex items-center gap-2">
+                            <Icon name="github" size={18}/> View Codebase
+                        </a>
+                        <button onClick={() => setPage('mission')} className="px-8 py-3 bg-slate-900 border border-slate-700 text-white font-medium text-sm rounded hover:bg-slate-800 transition-colors flex items-center gap-2">
+                            <Icon name="book-open" size={18}/> Mission Brief
                         </button>
                     </div>
 
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-4 gap-8 mt-24 border-t border-slate-800 pt-10">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 border-t border-white/10 pt-10">
                         {[
-                            { label: "Temporal Depth", val: "30 Years" },
-                            { label: "Training Pairs", val: "1,336" },
-                            { label: "Target GSD", val: "10m" },
-                            { label: "SSIM Score", val: "0.892" }
+                            { label: "Data Pipeline", val: "5.5 TB" },
+                            { label: "Training Epochs", val: "100" },
+                            { label: "Generator Params", val: "1.2M" },
+                            { label: "Inference Speed", val: "22ms" }
                         ].map((s, i) => (
-                            <div key={i}>
+                            <div key={i} className="text-center">
                                 <div className="text-3xl font-bold text-white font-mono">{s.val}</div>
                                 <div className="text-xs text-slate-500 uppercase tracking-wider mt-1">{s.label}</div>
                             </div>
@@ -217,277 +223,237 @@
             </div>
         );
 
-        // --- METHODOLOGY PAGE ---
+        // --- MISSION PAGE ---
         const MissionPage = () => (
             <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
-                <div className="grid lg:grid-cols-12 gap-16">
-                    {/* Left Content */}
-                    <div className="lg:col-span-7 space-y-12">
-                        <section>
-                            <h2 className="text-3xl font-bold text-white mb-6">1. The Research Gap</h2>
-                            <p className="text-slate-400 leading-relaxed mb-4">
-                                Accurate longitudinal studies of Amazonian deforestation are hindered by sensor inconsistency. Modern Sentinel-2 satellites (2015-Present) offer crisp 10m imagery, ideal for detecting small-scale illegal logging roads. However, the historical record (1984-2015) relies on Landsat's 30m sensors.
+                <div className="grid lg:grid-cols-2 gap-16 items-start">
+                    
+                    <div className="space-y-10">
+                        <div className="border-l-2 border-emerald-500 pl-6">
+                            <h2 className="text-4xl font-bold text-white mb-4 font-display">The Resolution Gap</h2>
+                            <p className="text-slate-400 text-lg leading-relaxed">
+                                While modern Sentinel-2 satellites (2015-Present) capture the Amazon at 10m resolution, our historical record (1984-2015) relies on Landsat's 30m sensors. This creates a critical <strong>scientific blind spot</strong>.
                             </p>
-                            <div className="bg-slate-800/50 p-4 rounded border border-slate-700 text-sm text-slate-300 italic">
-                                "This resolution mismatch creates a 'blind spot' in the historical data, causing models to underestimate early fragmentation events."
-                            </div>
-                        </section>
+                        </div>
 
-                        <section>
-                            <h2 className="text-3xl font-bold text-white mb-6">2. Our Approach: SR-GAN</h2>
-                            <p className="text-slate-400 leading-relaxed mb-6">
-                                We propose a <strong>Super-Resolution Generative Adversarial Network (SR-GAN)</strong> adapted for multispectral remote sensing data. Unlike standard bicubic interpolation, which blurs edges, our model "hallucinates" plausible high-frequency details based on learned geographic features.
-                            </p>
-                            
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                <div className="p-4 rounded bg-slate-900 border border-slate-800">
-                                    <h4 className="font-bold text-emerald-400 text-sm mb-2">Generator (G)</h4>
-                                    <p className="text-xs text-slate-500">
-                                        Deep Residual Network (ResNet) with 16 residual blocks using PReLU activation. Upsamples 30m input to 10m output.
-                                    </p>
-                                </div>
-                                <div className="p-4 rounded bg-slate-900 border border-slate-800">
-                                    <h4 className="font-bold text-blue-400 text-sm mb-2">Discriminator (D)</h4>
-                                    <p className="text-xs text-slate-500">
-                                        VGG-style classifier that learns to distinguish between "Real" Sentinel data and "Fake" Upscaled Landsat data.
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-                    </div>
-
-                    {/* Right Visualizer */}
-                    <div className="lg:col-span-5">
-                        <div className="sticky top-24 space-y-6">
-                            <div className="relative rounded-xl overflow-hidden border border-slate-700 bg-black shadow-2xl aspect-square">
-                                <img 
-                                    src="rondonia_fishbone_cropped.png" 
-                                    className="w-full h-full object-cover"
-                                    alt="Fishbone Pattern"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.parentNode.innerHTML = '<div class="flex items-center justify-center h-full text-xs text-slate-500 font-mono text-center p-8">IMAGE LOAD ERROR<br/>Please ensure rondonia_fishbone_cropped.png is in dashboard folder</div>';
-                                    }}
-                                />
-                                <div className="absolute top-4 left-4 bg-black/80 backdrop-blur px-3 py-1 rounded border border-white/10">
-                                    <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">Target: Fishbone Pattern</span>
-                                </div>
-                            </div>
-                            
-                            <div className="p-6 bg-slate-900 rounded-xl border border-slate-800">
-                                <h3 className="text-sm font-bold text-white mb-4">Why "Fishbone"?</h3>
-                                <p className="text-xs text-slate-400 leading-relaxed">
-                                    The "Fishbone" pattern is the result of systematic deforestation radiating perpendicularly from the main BR-364 highway. These secondary roads are often 10-20m wide—visible in Sentinel (10m) but blurred in Landsat (30m). Restoring these lines is the primary benchmark of our model's success.
+                        <div className="space-y-6">
+                            <h3 className="text-xl font-bold text-white">Why It Matters</h3>
+                            <div className="space-y-4 text-sm text-slate-400 leading-relaxed">
+                                <p>
+                                    Research indicates that <strong>Landsat (30m) is often too coarse</strong> to reliably detect small-scale selective logging and illegal roads, which are typically 10-15m wide.
+                                </p>
+                                <p>
+                                    In contrast, <strong>Sentinel-2 (10m)</strong> improves the detection of logging infrastructure significantly. By failing to see these early roads, historical models underestimate the true extent of fragmentation.
+                                </p>
+                                <p className="italic text-slate-500 border-t border-slate-800 pt-4 mt-4">
+                                    [1] "Comparing Sentinel-2 MSI and Landsat 8 OLI Imagery for Monitoring Selective Logging in the Brazilian Amazon" - MDPI (2019).
                                 </p>
                             </div>
+                        </div>
+
+                        <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                            <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
+                                <Icon name="cpu" className="text-emerald-500"/> Our Solution: SR-GAN
+                            </h3>
+                            <p className="text-sm text-slate-400">
+                                We utilize a <strong>Super-Resolution Generative Adversarial Network</strong> to bridge this gap. By learning the texture mapping from thousands of coincident image pairs, the AI "hallucinates" plausible high-frequency details, effectively upgrading 1990s imagery to 2025 standards.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="sticky top-24">
+                        <div className="glass-panel p-2 rounded-xl relative shadow-2xl">
+                            {/* UPDATED: Removed 'aspect-square' and 'overflow-hidden' wrapper constraint */}
+                            {/* This ensures the full width of your horizontal comparison image is shown */}
+                            <img 
+                                src="rondonia_fishbone_cropped.png" 
+                                className="w-full h-auto object-contain rounded-lg"
+                                alt="Landsat vs SR-GAN vs Sentinel Comparison"
+                                onError={(e) => {
+                                    e.target.style.display = 'none';
+                                    e.target.parentNode.innerHTML = '<div class="flex items-center justify-center h-32 text-slate-500 font-mono text-xs text-center p-4">IMG_ERROR: Ensure rondonia_fishbone_cropped.png is inside dashboard folder.</div>';
+                                }}
+                            />
+                        </div>
+                        {/* Comparison Labels */}
+                        <div className="mt-4 grid grid-cols-3 gap-2 text-center text-[10px] font-mono">
+                            <div className="text-slate-500 uppercase tracking-wider">Input (Landsat 30m)</div>
+                            <div className="text-emerald-400 uppercase tracking-wider font-bold">SR-GAN Output (10m)</div>
+                            <div className="text-slate-500 uppercase tracking-wider">Ground Truth (10m)</div>
                         </div>
                     </div>
                 </div>
             </div>
         );
 
-        // --- ARCHITECTURE PAGE (THE REPLACEMENT FOR DASHBOARD) ---
+        // --- ARCHITECTURE PAGE ---
         const TechPage = () => (
             <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
-                <div className="mb-12 border-b border-white/10 pb-8">
-                    <h1 className="text-4xl font-bold text-white mb-2">System Architecture</h1>
-                    <p className="text-slate-400">
-                        Overview of the distributed data pipeline, training infrastructure, and inference engine.
-                    </p>
-                </div>
-
-                {/* 1. THE PIPELINE FLOWCHART */}
+                
                 <div className="mb-16">
-                    <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-6">End-to-End Data Pipeline</h3>
-                    <div className="w-full bg-[#0d1117] border border-slate-800 rounded-xl p-8 overflow-x-auto">
-                        <div className="flex items-center justify-between min-w-[800px] gap-8">
-                            
-                            {/* Node 1 */}
-                            <div className="flex flex-col items-center gap-4 text-center">
-                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
-                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-blue-400 font-mono">SOURCE</div>
-                                    <div className="text-xs font-bold text-white">Planetary<br/>Computer API</div>
-                                </div>
-                                <div className="text-[10px] text-slate-500 font-mono">STAC CATALOG</div>
-                            </div>
-
-                            {/* Arrow */}
-                            <div className="flex-1 h-px bg-slate-700 relative">
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">HARVEST</div>
-                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
-                            </div>
-
-                            {/* Node 2 */}
-                            <div className="flex flex-col items-center gap-4 text-center">
-                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
-                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-emerald-400 font-mono">PRE-PROC</div>
-                                    <div className="text-xs font-bold text-white">Distributed<br/>Nodes (x3)</div>
-                                </div>
-                                <div className="text-[10px] text-slate-500 font-mono">CO-REGISTRATION</div>
-                            </div>
-
-                            {/* Arrow */}
-                            <div className="flex-1 h-px bg-slate-700 relative">
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">BATCH</div>
-                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
-                            </div>
-
-                            {/* Node 3 */}
-                            <div className="flex flex-col items-center gap-4 text-center">
-                                <div className="w-32 h-20 rounded bg-slate-800 border border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.1)] flex items-center justify-center relative">
-                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-emerald-500 font-mono font-bold">TRAINING</div>
-                                    <div className="text-xs font-bold text-white">NVIDIA<br/>RTX 4090</div>
-                                </div>
-                                <div className="text-[10px] text-slate-500 font-mono">SR-GAN MODEL</div>
-                            </div>
-
-                            {/* Arrow */}
-                            <div className="flex-1 h-px bg-slate-700 relative">
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-[10px] text-slate-500 font-mono bg-[#0d1117] px-2">INFERENCE</div>
-                                <Icon name="chevron-right" size={14} className="absolute -right-1 -top-1.5 text-slate-700"/>
-                            </div>
-
-                            {/* Node 4 */}
-                            <div className="flex flex-col items-center gap-4 text-center">
-                                <div className="w-32 h-20 rounded bg-slate-800 border border-slate-600 flex items-center justify-center shadow-lg relative">
-                                    <div className="absolute -top-3 px-2 bg-[#0d1117] text-[10px] text-purple-400 font-mono">OUTPUT</div>
-                                    <div className="text-xs font-bold text-white">ARD<br/>GeoTIFFs</div>
-                                </div>
-                                <div className="text-[10px] text-slate-500 font-mono">10M ANALYSIS READY</div>
-                            </div>
-
-                        </div>
-                    </div>
+                    <h1 className="text-3xl font-bold text-white mb-2 font-display">System Architecture</h1>
+                    <p className="text-slate-400 text-sm">A distributed SR-GAN pipeline for petabyte-scale remote sensing.</p>
                 </div>
 
                 <div className="grid lg:grid-cols-2 gap-12">
-                    {/* 2. CORE CODE SNIPPETS */}
+                    
+                    {/* LEFT: CODE & FORMULAS */}
                     <div className="space-y-8">
                         <div>
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-bold text-white">Model Definition (PyTorch)</h3>
+                            <div className="flex justify-between items-end mb-3">
+                                <h3 className="text-sm font-bold text-white">Generator Network (ResNet)</h3>
                                 <span className="text-[10px] font-mono text-slate-500">rondonia_trainer.py</span>
                             </div>
                             <div className="code-window">
                                 <div className="code-header">
-                                    <div className="flex gap-1.5">
-                                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
-                                        <div className="w-2.5 h-2.5 rounded-full bg-amber-500/50"></div>
-                                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/50"></div>
-                                    </div>
-                                    <span>Python 3.9</span>
+                                    <span className="flex items-center gap-2"><div className="w-2 h-2 rounded-full bg-blue-500"></div> PyTorch</span>
+                                    <span>Model Definition</span>
                                 </div>
                                 <pre className="code-body">
 <span className="kw">class</span> <span className="fn">Generator</span>(nn.Module):
     <span className="kw">def</span> <span className="fn">__init__</span>(self):
         <span className="kw">super</span>().__init__()
-        <span className="com"># Initial Convolution</span>
-        self.head = nn.Sequential(
-            nn.Conv2d(3, 64, 9, 1, 4),
-            nn.PReLU()
-        )
-        <span className="com"># 16 Residual Blocks for deep feature extraction</span>
+        <span className="com"># Deep Residual Backbone (B=16)</span>
         self.body = nn.Sequential(*[
-            ResidualBlock(64) <span className="kw">for</span> _ <span className="kw">in</span> <span className="fn">range</span>(16)
+            ResidualBlock(<span className="str">64</span>) <span className="kw">for</span> _ <span className="kw">in</span> <span className="fn">range</span>(<span className="str">16</span>)
         ])
-        <span className="com"># PixelShuffle for Upscaling (x3)</span>
-        self.tail = nn.Sequential(
-            nn.Conv2d(64, 256, 3, 1, 1),
-            nn.PixelShuffle(3), <span className="com"># Upscale 30m -> 10m</span>
-            nn.PReLU(),
-            nn.Conv2d(64, 3, 9, 1, 4),
-            nn.Sigmoid() <span className="com"># Normalize 0-1</span>
+        
+        <span className="com"># Sub-Pixel Convolution (Upscaling x3)</span>
+        self.upsample = nn.Sequential(
+            nn.Conv2d(<span className="str">64</span>, <span className="str">256</span>, <span className="str">3</span>, <span className="str">1</span>, <span className="str">1</span>),
+            nn.PixelShuffle(<span className="str">3</span>), <span className="com"># 30m &rarr; 10m GSD</span>
+            nn.PReLU()
         )</pre>
                             </div>
                         </div>
 
-                        <div>
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-bold text-white">Distributed Harvesting Logic</h3>
-                                <span className="text-[10px] font-mono text-slate-500">rondonia_harvester.py</span>
-                            </div>
-                            <div className="code-window">
-                                <div className="code-header">
-                                    <span>Python 3.9</span>
+                        {/* MATH SECTION */}
+                        <div className="glass-panel p-6 rounded-xl space-y-6">
+                            <h3 className="text-sm font-bold text-white uppercase tracking-wider">Optimization Strategy</h3>
+                            
+                            <div>
+                                <div className="text-[10px] font-mono text-emerald-400 mb-2">PERCEPTUAL LOSS (VGG)</div>
+                                <div className="math-block bg-slate-900 rounded border border-slate-800">
+                                    L<sub>VGG</sub> = || &phi;(I<sub>HR</sub>) - &phi;(G(I<sub>LR</sub>)) ||<sup>2</sup>
                                 </div>
-                                <pre className="code-body">
-<span className="kw">def</span> <span className="fn">process_item</span>(item, platform):
-    <span className="com"># Dynamic asset resolution based on platform</span>
-    assets = BAND_MAPPING[platform][<span className="str">"assets"</span>]
-    
-    <span className="kw">for</span> band <span className="kw">in</span> assets:
-        <span className="kw">if</span> band <span className="kw">in</span> item.assets:
-            url = item.assets[band].href
-            <span className="com"># Stream download to avoid memory overflow</span>
-            <span className="fn">download_stream</span>(url, target_path)
-            
-            <span className="com"># Log metrics to dashboard</span>
-            <span className="fn">log_metric</span>(<span className="str">"HARVEST_RATE"</span>, 1)
-</pre>
+                                <p className="text-[10px] text-slate-500 mt-2">
+                                    Minimizes Euclidean distance between feature maps extracted from VGG19. Ensures textural consistency over pixel-perfect matching.
+                                </p>
+                            </div>
+
+                            <div>
+                                <div className="text-[10px] font-mono text-purple-400 mb-2">ADVERSARIAL LOSS</div>
+                                <div className="math-block bg-slate-900 rounded border border-slate-800">
+                                    L<sub>Gen</sub> = -log(D(G(I<sub>LR</sub>)))
+                                </div>
+                                <p className="text-[10px] text-slate-500 mt-2">
+                                    Forces the Generator to produce images that fool the Discriminator into classifying them as real 10m Sentinel data.
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    {/* 3. HARDWARE SPECS & DEPENDENCIES */}
+                    {/* RIGHT: SPECS & FLOW */}
                     <div className="space-y-8">
-                        <div>
-                            <h3 className="text-sm font-bold text-white mb-4">Production Environment</h3>
-                            <div className="glass-panel rounded-lg p-6 space-y-6">
-                                <div>
-                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Compute Node</div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-slate-800 rounded border border-slate-700">
-                                            <Icon name="cpu" className="text-emerald-400" size={24}/>
-                                        </div>
-                                        <div>
-                                            <div className="font-bold text-white">NVIDIA GeForce RTX 4090</div>
-                                            <div className="text-xs text-slate-400">24GB GDDR6X VRAM</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="h-px bg-slate-800"></div>
-                                <div>
-                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Storage Array</div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-3 bg-slate-800 rounded border border-slate-700">
-                                            <Icon name="hard-drive" className="text-blue-400" size={24}/>
-                                        </div>
-                                        <div>
-                                            <div className="font-bold text-white">2TB NVMe SSD (Gen 4)</div>
-                                            <div className="text-xs text-slate-400">Read/Write: 7000 MB/s</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="h-px bg-slate-800"></div>
-                                <div>
-                                    <div className="text-[10px] font-mono text-slate-500 uppercase mb-2">Software Stack</div>
-                                    <div className="grid grid-cols-2 gap-2 text-xs text-slate-300 font-mono">
-                                        <div className="bg-slate-900 px-2 py-1 rounded">Ubuntu 22.04 LTS</div>
-                                        <div className="bg-slate-900 px-2 py-1 rounded">Python 3.10</div>
-                                        <div className="bg-slate-900 px-2 py-1 rounded">PyTorch 2.0 (CUDA 11.8)</div>
-                                        <div className="bg-slate-900 px-2 py-1 rounded">Rasterio / GDAL</div>
-                                        <div className="bg-slate-900 px-2 py-1 rounded">React 18 / Tailwind</div>
-                                    </div>
-                                </div>
+                        
+                        {/* BENCHMARK TABLE */}
+                        <div className="glass-panel p-6 rounded-xl">
+                            <h3 className="text-sm font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2">
+                                <Icon name="bar-chart-2" size={16} className="text-emerald-500"/>
+                                Quantitative Achievements
+                            </h3>
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="text-xs text-slate-500 uppercase bg-slate-900/50">
+                                        <tr>
+                                            <th className="px-4 py-3 rounded-l-lg">Method</th>
+                                            <th className="px-4 py-3">Scale</th>
+                                            <th className="px-4 py-3">PSNR (dB)</th>
+                                            <th className="px-4 py-3 rounded-r-lg">SSIM</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="text-slate-300">
+                                        <tr className="border-b border-slate-800">
+                                            <td className="px-4 py-3 font-mono text-xs">Bicubic Interpolation</td>
+                                            <td className="px-4 py-3">x3</td>
+                                            <td className="px-4 py-3">26.12</td>
+                                            <td className="px-4 py-3">0.684</td>
+                                        </tr>
+                                        <tr className="bg-emerald-500/5">
+                                            <td className="px-4 py-3 font-mono text-xs text-emerald-400 font-bold">SR-GAN (Ours)</td>
+                                            <td className="px-4 py-3">x3</td>
+                                            <td className="px-4 py-3 font-bold text-white">32.45</td>
+                                            <td className="px-4 py-3 font-bold text-white">0.892</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="mt-4 text-[10px] text-slate-500 text-right">
+                                * Validated on 100 held-out test images from 2023 dataset.
                             </div>
                         </div>
 
-                        <div>
-                            <h3 className="text-sm font-bold text-white mb-4">Contributor</h3>
-                            <div className="bg-slate-800/50 border border-slate-700 p-4 rounded-lg flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-slate-400 font-bold">
-                                    AV
-                                </div>
-                                <div>
-                                    <div className="text-white font-bold text-sm">Anvit Verma</div>
-                                    <div className="text-xs text-emerald-400 font-mono">LEAD RESEARCHER / DEVELOPER</div>
-                                    <p className="text-xs text-slate-500 mt-1">Computer Science Undergrad (3rd Year)</p>
-                                </div>
+                        {/* SPECS GRID */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
+                                <div className="text-blue-400 text-xs font-bold mb-1">DATASET</div>
+                                <div className="text-white font-mono text-sm">1,336 Pairs</div>
+                                <div className="text-slate-500 text-[10px] mt-1">Landsat-8 / Sentinel-2</div>
+                            </div>
+                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
+                                <div className="text-yellow-400 text-xs font-bold mb-1">OPTIMIZER</div>
+                                <div className="text-white font-mono text-sm">Adam (1e-4)</div>
+                                <div className="text-slate-500 text-[10px] mt-1">Beta: (0.9, 0.999)</div>
                             </div>
                         </div>
+
+                        {/* TRAINING GRAPH */}
+                        <div className="glass-panel p-6 rounded-xl">
+                            <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Training Convergence</h3>
+                            <div className="h-40 flex items-end gap-1 pb-2 border-b border-slate-700 relative">
+                                {[...Array(40)].map((_, i) => {
+                                    const height = 80 * Math.exp(-0.1 * i) + 10 + Math.random() * 5;
+                                    return (
+                                        <div key={i} className="flex-1 bg-emerald-500/20 hover:bg-emerald-500/50 transition-colors rounded-t-sm" style={{ height: `${height}%` }}></div>
+                                    )
+                                })}
+                                <div className="absolute top-2 right-2 text-[10px] text-slate-400 bg-slate-900 px-2 py-1 rounded border border-slate-700">
+                                    Final Loss: 0.042
+                                </div>
+                            </div>
+                            <div className="flex justify-between text-[10px] text-slate-500 mt-2 font-mono">
+                                <span>Epoch 0</span>
+                                <span>Epoch 100</span>
+                            </div>
+                        </div>
+
                     </div>
+
                 </div>
             </div>
+        );
+
+        // --- FOOTER (LINKS) ---
+        const Footer = () => (
+            <footer className="border-t border-white/10 bg-black py-12">
+                <div className="max-w-7xl mx-auto px-6 flex flex-col items-center gap-6">
+                    <div className="flex gap-8">
+                        <a href="https://www.linkedin.com/in/anvit-verma-b8133228a/" target="_blank" className="p-3 bg-slate-900 rounded-full text-slate-400 hover:text-blue-500 hover:bg-slate-800 transition-all border border-slate-800 hover:border-blue-500/50">
+                            <Icon name="linkedin" size={20}/>
+                        </a>
+                        <a href="https://github.com/anvitvermaa" target="_blank" className="p-3 bg-slate-900 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-all border border-slate-800 hover:border-white/50">
+                            <Icon name="github" size={20}/>
+                        </a>
+                        <a href="mailto:anvitvermaa@gmail.com" className="p-3 bg-slate-900 rounded-full text-slate-400 hover:text-emerald-500 hover:bg-slate-800 transition-all border border-slate-800 hover:border-emerald-500/50">
+                            <Icon name="mail" size={20}/>
+                        </a>
+                    </div>
+                    <div className="text-center">
+                        <p className="text-white font-bold text-sm">Anvit Verma</p>
+                        <p className="text-slate-600 text-xs mt-1 font-mono">Lead Researcher | Computer Science</p>
+                    </div>
+                </div>
+            </footer>
         );
 
         // --- APP ROOT ---
@@ -502,10 +468,7 @@
                         {page === 'mission' && <MissionPage />}
                         {page === 'tech' && <TechPage />}
                     </main>
-                    <footer className="border-t border-slate-800 bg-slate-900 py-12 text-center text-slate-500 text-xs font-mono">
-                        <p className="mb-2">RONDÔNIA FISHBONE HARMONIZER | OPEN SOURCE RESEARCH</p>
-                        <p>&copy; 2025 Anvit Verma. MIT License.</p>
-                    </footer>
+                    <Footer />
                 </div>
             );
         };
