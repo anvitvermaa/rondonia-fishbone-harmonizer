@@ -186,15 +186,13 @@
 
                 <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
                     
-                    {/* BADGE REMOVED HERE AS REQUESTED */}
-
                     <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 tracking-tighter leading-tight font-display">
                         Restoring History,<br/>
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Pixel by Pixel.</span>
                     </h1>
 
                     <p className="text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10">
-                        An open-source initiative leveraging <strong>Super-Resolution GANs</strong> to reconstruct lost deforestation patterns in 30-year archival Landsat imagery. We bridge the resolution gap between the past (30m) and the present (10m).
+                        A dedicated Deep Learning initiative to restore the historical deforestation record of <strong>Rondônia, Brazil</strong>. Using SR-GANs to recover the lost "Fishbone" patterns from 30-year archival satellite imagery.
                     </p>
 
                     <div className="flex justify-center gap-4">
@@ -202,13 +200,13 @@
                             <Icon name="github" size={18}/> View Codebase
                         </a>
                         <button onClick={() => setPage('mission')} className="px-8 py-3 bg-slate-900 border border-slate-700 text-white font-medium text-sm rounded hover:bg-slate-800 transition-colors flex items-center gap-2">
-                            <Icon name="book-open" size={18}/> Mission Brief
+                            <Icon name="book-open" size={18}/> Why Rondônia?
                         </button>
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 border-t border-white/10 pt-10">
                         {[
-                            { label: "Data Pipeline", val: "5.5 TB" },
+                            { label: "Target Region", val: "Rondônia" },
                             { label: "Training Epochs", val: "100" },
                             { label: "Generator Params", val: "1.2M" },
                             { label: "Inference Speed", val: "22ms" }
@@ -223,48 +221,44 @@
             </div>
         );
 
-        // --- MISSION PAGE ---
+        // --- MISSION PAGE (SCIENTIFIC CONTEXT) ---
         const MissionPage = () => (
             <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
                 <div className="grid lg:grid-cols-2 gap-16 items-start">
                     
                     <div className="space-y-10">
-                        <div className="border-l-2 border-emerald-500 pl-6">
-                            <h2 className="text-4xl font-bold text-white mb-4 font-display">The Resolution Gap</h2>
-                            <p className="text-slate-400 text-lg leading-relaxed">
-                                While modern Sentinel-2 satellites (2015-Present) capture the Amazon at 10m resolution, our historical record (1984-2015) relies on Landsat's 30m sensors. This creates a critical <strong>scientific blind spot</strong>.
-                            </p>
-                        </div>
-
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-bold text-white">Why It Matters</h3>
+                        <div>
+                            <h2 className="text-4xl font-bold text-white mb-4 font-display">Why Rondônia?</h2>
                             <div className="space-y-4 text-sm text-slate-400 leading-relaxed">
                                 <p>
-                                    Research indicates that <strong>Landsat (30m) is often too coarse</strong> to reliably detect small-scale selective logging and illegal roads, which are typically 10-15m wide.
+                                    The state of <strong>Rondônia, Brazil</strong>, is the global epicenter of a specific type of systematic deforestation known as the <strong>"Fishbone" pattern</strong> (Espinha de Peixe).
                                 </p>
                                 <p>
-                                    In contrast, <strong>Sentinel-2 (10m)</strong> improves the detection of logging infrastructure significantly. By failing to see these early roads, historical models underestimate the true extent of fragmentation.
-                                </p>
-                                <p className="italic text-slate-500 border-t border-slate-800 pt-4 mt-4">
-                                    [1] "Comparing Sentinel-2 MSI and Landsat 8 OLI Imagery for Monitoring Selective Logging in the Brazilian Amazon" - MDPI (2019).
+                                    This pattern emerges from the planned construction of secondary roads perpendicular to main highways like the BR-364. These smaller roads are often only <strong>10-15 meters wide</strong>.
                                 </p>
                             </div>
                         </div>
 
                         <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
                             <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
-                                <Icon name="cpu" className="text-emerald-500"/> Our Solution: SR-GAN
+                                <Icon name="alert-triangle" className="text-emerald-500"/> The Historical Blind Spot
                             </h3>
                             <p className="text-sm text-slate-400">
-                                We utilize a <strong>Super-Resolution Generative Adversarial Network</strong> to bridge this gap. By learning the texture mapping from thousands of coincident image pairs, the AI "hallucinates" plausible high-frequency details, effectively upgrading 1990s imagery to 2025 standards.
+                                Because these roads are narrow (10-15m), they are practically invisible to historical Landsat sensors (30m pixels), appearing as blurry "noise." This means 30 years of fragmentation history has been underestimated. Our model recovers these lost structural details.
+                            </p>
+                        </div>
+
+                        <div className="border-l-2 border-emerald-500 pl-6">
+                            <h3 className="text-xl font-bold text-white mb-2">Our Solution: SR-GAN</h3>
+                            <p className="text-sm text-slate-400">
+                                We utilize a <strong>Super-Resolution Generative Adversarial Network</strong> trained specifically on Rondônia's geography. It learns to "hallucinate" the missing fishbone structures, effectively upgrading 1990s imagery to modern 2025 standards.
                             </p>
                         </div>
                     </div>
 
                     <div className="sticky top-24">
                         <div className="glass-panel p-2 rounded-xl relative shadow-2xl">
-                            {/* UPDATED: Removed 'aspect-square' and 'overflow-hidden' wrapper constraint */}
-                            {/* This ensures the full width of your horizontal comparison image is shown */}
+                            {/* UPDATED: Full width for horizontal strip */}
                             <img 
                                 src="rondonia_fishbone_cropped.png" 
                                 className="w-full h-auto object-contain rounded-lg"
@@ -286,7 +280,7 @@
             </div>
         );
 
-        // --- ARCHITECTURE PAGE ---
+        // --- ARCHITECTURE PAGE (TECHNICAL DEEP DIVE) ---
         const TechPage = () => (
             <div className="min-h-screen pt-24 pb-20 px-6 max-w-7xl mx-auto">
                 
@@ -297,7 +291,7 @@
 
                 <div className="grid lg:grid-cols-2 gap-12">
                     
-                    {/* LEFT: CODE & FORMULAS */}
+                    {/* LEFT COLUMN: ARCHITECTURE & LOSS */}
                     <div className="space-y-8">
                         <div>
                             <div className="flex justify-between items-end mb-3">
@@ -327,7 +321,7 @@
                             </div>
                         </div>
 
-                        {/* MATH SECTION */}
+                        {/* MATH SECTION: LOSS FUNCTIONS */}
                         <div className="glass-panel p-6 rounded-xl space-y-6">
                             <h3 className="text-sm font-bold text-white uppercase tracking-wider">Optimization Strategy</h3>
                             
@@ -353,7 +347,7 @@
                         </div>
                     </div>
 
-                    {/* RIGHT: SPECS & FLOW */}
+                    {/* RIGHT COLUMN: RESULTS & BENCHMARKS */}
                     <div className="space-y-8">
                         
                         {/* BENCHMARK TABLE */}
@@ -393,24 +387,11 @@
                             </div>
                         </div>
 
-                        {/* SPECS GRID */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
-                                <div className="text-blue-400 text-xs font-bold mb-1">DATASET</div>
-                                <div className="text-white font-mono text-sm">1,336 Pairs</div>
-                                <div className="text-slate-500 text-[10px] mt-1">Landsat-8 / Sentinel-2</div>
-                            </div>
-                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
-                                <div className="text-yellow-400 text-xs font-bold mb-1">OPTIMIZER</div>
-                                <div className="text-white font-mono text-sm">Adam (1e-4)</div>
-                                <div className="text-slate-500 text-[10px] mt-1">Beta: (0.9, 0.999)</div>
-                            </div>
-                        </div>
-
-                        {/* TRAINING GRAPH */}
+                        {/* TRAINING DYNAMICS GRAPH (SIMULATED) */}
                         <div className="glass-panel p-6 rounded-xl">
                             <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider">Training Convergence</h3>
                             <div className="h-40 flex items-end gap-1 pb-2 border-b border-slate-700 relative">
+                                {/* Simulated Loss Curve */}
                                 {[...Array(40)].map((_, i) => {
                                     const height = 80 * Math.exp(-0.1 * i) + 10 + Math.random() * 5;
                                     return (
@@ -424,6 +405,20 @@
                             <div className="flex justify-between text-[10px] text-slate-500 mt-2 font-mono">
                                 <span>Epoch 0</span>
                                 <span>Epoch 100</span>
+                            </div>
+                        </div>
+
+                        {/* SPECS GRID */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
+                                <div className="text-blue-400 text-xs font-bold mb-1">DATASET</div>
+                                <div className="text-white font-mono text-sm">1,336 Pairs</div>
+                                <div className="text-slate-500 text-[10px] mt-1">Landsat-8 / Sentinel-2</div>
+                            </div>
+                            <div className="p-4 bg-slate-900 rounded border border-slate-800">
+                                <div className="text-yellow-400 text-xs font-bold mb-1">OPTIMIZER</div>
+                                <div className="text-white font-mono text-sm">Adam (1e-4)</div>
+                                <div className="text-slate-500 text-[10px] mt-1">Beta: (0.9, 0.999)</div>
                             </div>
                         </div>
 
