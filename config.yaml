@@ -1,0 +1,215 @@
+# ============================================================
+# config.yaml  –  Rondônia SR Comparative Study  (v2)
+# ============================================================
+# See docs/TRAINING_STRATEGY.md for full rationale behind
+# every setting below.
+# v2 changes: histogram matching, tighter percentile clipping,
+#   ERGAS metric, EMA for GANs, downstream segmentation task,
+#   cloud execution profiles (Kaggle / Saturn Cloud).
+# ============================================================
+
+# ── Paths ───────────────────────────────────────────────────
+paths:
+  landsat_dir:   "data/raw/landsat"       # 30-m Landsat 5/7/8 .tif files
+  sentinel_dir:  "data/raw/sentinel"      # 10-m Sentinel-2 .tif files
+  aligned_dir:   "data/aligned"          # sub-pixel aligned patches (output)
+  checkpoints:   "checkpoints"
+  results:       "results"
+  logs:          "logs"
+
+# ── Patch Extraction ─────────────────────────────────────────
+patch:
+  lr_size:        48          # LR patch side (30m pixels → ~1440m footprint)
+  hr_size:        144         # HR patch side (10m pixels → same footprint, scale×3)
+  scale:          3           # upscale factor (30m → 10m)
+  stride:         24          # patch stride (50% overlap)
+  min_valid_frac: 0.85        # reject patches with >15% nodata / cloud
+
+# ── Spectral Bands ───────────────────────────────────────────
+bands:
+  # Landsat band indices (1-indexed) matched to Sentinel-2
+  landsat:  [1, 2, 3, 4, 5, 6]   # B, G, R, NIR, SWIR1, SWIR2
+  sentinel: [1, 2, 3, 4, 5, 6]   # B, G, R, NIR, SWIR1, SWIR2 (stacked by download_data.py)
+  n_channels: 6
+
+# ── Pre-processing ───────────────────────────────────────────
+# Applied during prepare_patches.py BEFORE patch extraction.
+pre_processing:
+  histogram_matching: true    # align Landsat dynamic range to Sentinel-2
+  max_align_rmse:     0.3     # discard patch pairs with co-reg RMSE > 0.3px
+  reference_band:     3       # NIR band index for phase cross-correlation
+
+# ── Smart Scaling ────────────────────────────────────────────
+# Per-channel percentile clipping prior to [-1,1] normalization.
+# Prevents bright clouds/specular outliers from collapsing the
+# variance of terrestrial vegetation pixels.
+# v2: tightened to 1/99 (vs 2/98) for better road edge preservation.
+# Reference: docs/TRAINING_STRATEGY.md §6
+smart_scaling:
+  lo_pct:   1.0      # lower clipping percentile  (removes dark noise)
+  hi_pct:  99.0      # upper clipping percentile  (removes cloud/specular)
+  out_min:  -1.0
+  out_max:   1.0
+
+# ── Training (shared defaults) ───────────────────────────────
+# Dataset target: 12 Landsat/Sentinel-2 paired scenes (§0c of TRAINING_STRATEGY.md)
+#   8 train scenes  → ~3,000 training patches  (after 85% validity filter)
+#   2 val scenes    → ~500 validation patches
+#   2 test scenes   → ~500 test patches (spatially separate: Ji-Paraná municipality)
+# Per-model epoch overrides are in the models: section below.
+# Use --epochs CLI flag to override for quick tests.
+training:
+  batch_size:     4          # per-GPU batch (RTX 3060 12 GB)
+  accum_steps:    8          # effective batch = 4 × 8 = 32
+  num_epochs:     300        # base default; per-model overrides below
+  val_interval:   5          # validate every 5 epochs → smooth PSNR curves
+  lr:             2.0e-4
+  lr_min:         1.0e-6
+  scheduler:      "cosine"   # CosineAnnealingLR (best for transformers)
+  step_decay:     [150, 250] # epochs for StepLR fallback if used
+  step_gamma:     0.5
+  seed:           42
+  num_workers:    4
+  pin_memory:     true
+  amp_dtype:      "bfloat16" # native on RTX 30xx Ampere — no GradScaler needed
+
+# ── GAN-specific ─────────────────────────────────────────────
+# CRITICAL: run Stage 1 (pure L1, 100 epochs) before Stage 2 (GAN).
+# Skipping Stage 1 causes mode collapse.
+# See docs/TRAINING_STRATEGY.md §7 for exact commands.
+gan:
+  lr_g:          1.0e-4
+  lr_d:          1.0e-4
+  lambda_pixel:  1.0e-2     # pixel (L1) loss weight
+  lambda_feat:   1.0        # perceptual (VGG) loss weight
+  lambda_adv_g:  5.0e-3     # adversarial loss weight for generator
+  n_critic:      1          # discriminator steps per generator step
+  pretrain_epochs: 100      # Stage 1 L1-only warmup before adversarial training
+
+# ── Models ───────────────────────────────────────────────────
+# epoch counts calibrated to RTX 3060 + ~1000 training patches
+# for publishable convergence. See docs/TRAINING_STRATEGY.md §3.
+models:
+  bicubic:
+    enabled:    true
+    # Deterministic — no training. Evaluation only.
+    # Gives Table 1 Row 1; establishes 24-28 dB PSNR ceiling on real data.
+
+  srcnn:
+    enabled:    true
+    num_epochs: 150          # shallow 3-layer CNN; converges fast (~20 min)
+    n_channels: 6
+
+  edsr:
+    enabled:    true
+    num_epochs: 300          # residual depth needs time to stabilize (~2.1 hrs)
+    n_resblocks: 16
+    n_feats:     64
+    res_scale:   0.1
+
+  rcan:
+    enabled:    true
+    num_epochs: 300          # channel attention needs ~200 epochs to "click" (~3.75 hrs)
+    n_resgroups: 5
+    n_resblocks: 10
+    n_feats:     64
+    reduction:   16
+
+  srgan:
+    enabled:    true
+    num_epochs: 200          # 100 L1 pretrain + 100 adversarial (~3.1 hrs total)
+    n_resblocks_g: 16
+    # OOM fallback: accum_steps: 16, batch_size: 2
+
+  esrgan:
+    enabled:    true
+    num_epochs: 300          # 100 RRDB pretrain + 200 adversarial (~7.5 hrs total)
+    n_rrdb:    16
+    # OOM fallback: accum_steps: 16, batch_size: 2
+
+  swinir:
+    enabled:    true
+    num_epochs: 400          # transformers converge slowly on small datasets (~7.8 hrs)
+    img_size:    48
+    embed_dim:   60
+    depths:      [6, 6, 6, 6]
+    num_heads:   [6, 6, 6, 6]
+    window_size: 8
+    mlp_ratio:   2.0
+    upsampler:   "pixelshuffle"
+
+  hat:
+    enabled:    true
+    num_epochs: 500          # hybrid attention; most complex; patience rewarded (~11.8 hrs)
+    img_size:       48
+    embed_dim:      48
+    depths:         [6, 6, 6, 6]
+    num_heads:      [6, 6, 6, 6]
+    window_size:    8
+    mlp_ratio:      2.0
+    compress_ratio: 3
+    squeeze_factor: 30
+    upsampler:      "pixelshuffle"
+
+# ── Evaluation ───────────────────────────────────────────────
+# Report metrics on TWO test subsets (see docs/TRAINING_STRATEGY.md §0g):
+#   test_a: standard deforestation scenes (TE-01, Ji-Paraná area)
+#   test_b: subtle roads / hard case scenes (TE-02, Ji-Paraná area)
+# NEVER report val metrics in the paper — val is for epoch selection only.
+evaluation:
+  metrics:      ["psnr", "ssim", "sam", "lpips", "ergas"]
+  save_images:  true
+  n_save:       16           # SR tiles to save per model per test subset
+  split:        "test"       # always evaluate on held-out test set
+  test_subsets: ["test_a", "test_b"]  # report separately for the paper
+  rgb_bands:    [2, 1, 0]   # Red, Green, Blue (0-indexed) for LPIPS/visual
+
+# ── EMA (Exponential Moving Average) ─────────────────────────
+# Stabilises GAN generator weight updates. Applied to SRGAN + ESRGAN only.
+# EMA weights saved as best_ema.pt alongside regular best.pt.
+ema:
+  enabled:  true
+  decay:    0.999            # standard value — tune to 0.9999 for >300 epochs
+
+# ── Downstream Task (Segmentation) ───────────────────────────
+# Trains a lightweight U-Net on SR outputs to classify:
+#   class 0 = intact forest  (NDVI >= 0.5)
+#   class 1 = deforestation  (NDVI 0.1–0.5 with bare soil indicator)
+#   class 2 = logging road   (NDVI < 0.1, high SWIR edge response)
+# Run downstream/train_downstream.py after all SR models are trained.
+downstream:
+  enabled:      true
+  model:        "unet"       # lightweight 4-level U-Net, ~500K params
+  n_classes:    3            # forest / deforestation / logging_road
+  epochs:       50
+  lr:           1.0e-3
+  batch_size:   8
+  label_method: "ndvi"       # ndvi | prodes (PRODES shapefile path required)
+  prodes_shp:   null         # set to path of PRODES shapefile if label_method=prodes
+
+# ── Statistical Significance (for publication) ───────────────
+# Run each model 3× with these seeds, report mean ± std in results table.
+reproducibility:
+  seeds:        [42, 123, 7]
+  report_std:   true
+
+# ── Cloud Execution Profiles ──────────────────────────────────
+# Override training settings per cloud platform.
+# Usage: python train.py --cloud kaggle  (or --cloud saturn)
+cloud:
+  kaggle:
+    # Kaggle: 30 hrs/week, NVIDIA P100/T4, 16 GB VRAM
+    # Best for: SRCNN, EDSR, RCAN, SwinIR (pixel-loss, stable)
+    batch_size:    4
+    accum_steps:   8          # effective batch = 32
+    amp_dtype:     "bfloat16"
+    num_workers:   2          # Kaggle kernel limit
+    models_to_run: ["srcnn", "edsr", "rcan", "swinir"]
+  saturn:
+    # Saturn Cloud: 150 hrs/month, NVIDIA T4, 16 GB VRAM
+    # Best for: SRGAN, ESRGAN, HAT (GAN / heavy transformer)
+    batch_size:    2
+    accum_steps:   16         # effective batch = 32 with less VRAM
+    amp_dtype:     "bfloat16"
+    num_workers:   4
+    models_to_run: ["srgan", "esrgan", "hat"]
