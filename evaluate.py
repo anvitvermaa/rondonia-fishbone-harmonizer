@@ -456,9 +456,10 @@ def print_results_table(results: list[dict]) -> None:
             "psnr":    "pixel-level distortion (dB)",
             "ssim":    "structural similarity [-1,1]",
             "sam_deg": "spectral angle, degrees",
+            "ergas":   "relative global error",
             "lpips":   "perceptual similarity (AlexNet)",
         }
-        print(f"    {m:<10} {d}   {descs[m]}")
+        print(f"    {m:<10} {d}   {descs.get(m, '')}")
 
 
 def save_results(results: list[dict], results_dir: Path) -> None:
